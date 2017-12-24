@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Jasmine Spec Runner v2.8.0</title>
+
+  <link rel="shortcut icon" type="image/png" href="lib/jasmine-2.8.0/jasmine_favicon.png">
+  <link rel="stylesheet" href="lib/jasmine-2.8.0/jasmine.css">
+
+  <script src="lib/jasmine-2.8.0/jasmine.js"></script>
+  <script src="lib/jasmine-2.8.0/jasmine-html.js"></script>
+  <script src="lib/jasmine-2.8.0/boot.js"></script>
+  <script src="../jquery-3.2.1.min.js"></script>
+  <script src = "src/validateForm.js"></script> 
+  <script src = "src/wrongPassword.js"></script> 
+  <script src = "spec/wrongPasswordSpec.js"></script> 
+  <script src = "spec/validateFormSpec.js"></script> 
+
+</head>
+
+<body>
+<div>
+	<form action="register.php" onsubmit="return validateForm();" method="post" name="registerForm">
+	  <input type="text" id="firstname" name="firstname" placeholder="שם פרטי" value="test1"/>
+	  <input type="text" id="lastname" name="lastname" placeholder="שם משפחה" value="test1"/>
+	  <input type="text" id="username" name="username" placeholder="שם משתמש" value="test1"/>
+	  <input type="password" id="password" name="password" placeholder="סיסמה" value="test1"/>
+	  <input type="text" id="email" name="email" placeholder="כתובת מייל" value="test1@gmail.com"/>
+	  <img id="captcha_field" alt="CAPTCHA" />
+	  <input type="text" id="captcha" name="captcha" placeholder="הכנס את הקוד הרשום למעלה" value="test"/>
+	  <div id="error_msg" style="color: red;"></div>
+	</form>
+</div>
+</body>
+</html>
