@@ -12,21 +12,31 @@ $db = include 'database.php';
 // Create connection
 $conn = new mysqli($db['servername'], $db['username'], $db['password'], $db['dbname']);
 mysqli_set_charset($conn,'utf8');
-// Check connection
 if ($conn->connect_error) {
 	die("Connection failed: " . $conn->connect_error);
 }
-$result = $conn->query("select p.id from players p join users u on u.id = p.user_id and u.username = '" . $_SESSION['username'] . "'");
+
+//check the current status of the player
+$result = $conn->query("select p.id, p.startDate, p.question_num from players p join users u on u.id = p.user_id and u.username = '" . $_SESSION['username'] . "'");
 if ($result->num_rows > 0) {
+
     // output data of each row
     while($row = $result->fetch_assoc()) {
-       $player_id = $row['id'];
-		break; 
+        $now = getdate();
+        $startDate = date_create_from_format('Y-m-d H:i:s', $row['startDate']);
+        $player_id = $row['id'];
+        $question_num = $row['question_num'];
+        //check if player already played the game
+        if ($startDate->format("d") == $now['mday'] && $startDate->format("m") == $now['mon'] && $startDate->format("Y") == $now['year'] && $question_num > $db['questions_num_per_game']) {
+			header("location: welcome.php");
+	  		exit;
+		}
+        break;
     }
 }
 
-$result = $conn->query("delete from playerquestions where player_id = " . $player_id);
-	
+//$result = $conn->query("delete from playerquestions where player_id = " . $player_id);
+
 }
 ?>
 <!DOCTYPE html>
@@ -40,7 +50,7 @@ $result = $conn->query("delete from playerquestions where player_id = " . $playe
 	var score= 0;
 	var counter=0;
 	var interval=0;
-	var currentQuestion = 0;
+	var currentQuestion = 1;
 	var ans = 1;
 	var level = 1;
 	
@@ -58,7 +68,6 @@ $result = $conn->query("delete from playerquestions where player_id = " . $playe
 					ans = response[6];
 					level = response[7];
 					document.getElementById('level').textContent = "רמת קושי:" + level;
-
 				}
 				else {
 					alert("שגיאה בעמוד. נא לנסות מאוחר יותר\n" + this.responseText);
@@ -156,14 +165,26 @@ $result = $conn->query("delete from playerquestions where player_id = " . $playe
 	var tim=document.getElementById('time');
 	var scor=document.getElementById('score');
 	scor.textContent=score;
-    tim.textContent=counter;
+    tim.textContent="00:00:00";
 	var NumberOfQuestions = 30;
-	
+
 	setTimer();
+
+	function pad(val) {
+		var valString = val + "";
+		if (valString.length < 2) {
+			return "0" + valString;
+		}
+		return valString;
+	}
+
 	function setTimer() {
 		interval = setInterval(function () {
 			++counter;
-			tim.textContent=counter;
+			var hour = Math.floor(counter /3600);
+   			var minute = Math.floor((counter - hour*3600)/60);
+   			var seconds = counter - (hour*3600 + minute*60);
+			tim.textContent = pad(hour) + ":" + pad(minute) + ":" + pad(seconds);
 			if(counter<60){
 				tim.style.color='#00b300';
 			}

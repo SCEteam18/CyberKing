@@ -67,12 +67,12 @@ CREATE TABLE `questions` (
 ) ENGINE=InnoDB;
 
 CREATE TABLE `playerquestions` (
+`id` int(11) NOT NULL AUTO_INCREMENT,
  `player_id` int(11) NOT NULL,
  `question_id` int(11) NOT NULL,
- KEY `player_id` (`player_id`),
- KEY `question_id` (`question_id`),
  CONSTRAINT `playerquestions_ibfk_1` FOREIGN KEY (`player_id`) REFERENCES `players` (`id`),
- CONSTRAINT `playerquestions_ibfk_2` FOREIGN KEY (`question_id`) REFERENCES `questions` (`id`)
+ CONSTRAINT `playerquestions_ibfk_2` FOREIGN KEY (`question_id`) REFERENCES `questions` (`id`),
+ PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
 -- insert users--
