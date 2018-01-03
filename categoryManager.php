@@ -135,6 +135,7 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 	<table class="mainTable">
 		<tr>
 			<th>קטגוריה</th>
+			<th>מספר קטגוריה</th>
 			<th>מחיקה</th>	
 			<th>עדכון</th>
 		</tr>
@@ -155,7 +156,8 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 		if ($result->num_rows > 0) {
 			while($row = $result->fetch_assoc()) {
 				echo "<tr>
-						<td><textarea name='" . $row['id'] . "' hidden>" . $row['name'] . "</textarea><span onclick='javascript:editText(this, this.parentNode.firstChild);'>" . shortenString($row['name']) . "</span></td>" . 
+						<td><textarea name='" . $row['id'] . "' hidden>" . $row['name'] . "</textarea><span onclick='javascript:editText(this, this.parentNode.firstChild);'>" . shortenString($row['name']) . "</span></td>" .
+                        "<td width='1%;'><span>". $row['id'] ."</span></td>" .						
 						"<td width='1%;'><button class='minibutton' onclick='javascript:deleteRow(" . $row['id'] . ");'>X</button></td>" .
 						"<td width='1%;'><button class='minibutton' onclick='javascript:editRow(" . $row['id'] . ");'>✓</button></td>
 					</tr>";
