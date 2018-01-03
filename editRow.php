@@ -35,6 +35,19 @@ if ($table == "questions") {
 	$conn->close();
 	echo "הרשומה עודכנה";
 }
+if ($table == "categories") {
+	if($_GET['p1']!=""){
+     
+	$stmt = $conn->prepare("update categories set name = ? where id = ?");
+	$stmt->bind_param("ss", $name, $id_to_edit);
+	$name=$_GET['p1'];
+	$id_to_edit = $_GET['id'];
+	$stmt->execute();
+	$stmt->close();
+	$conn->close();
+	echo "הרשומה עודכנה";
+	}
+}
 else {
 	echo "טעות בטבלה";
 }

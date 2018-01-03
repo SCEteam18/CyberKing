@@ -27,7 +27,7 @@ CREATE TABLE `players` (
  `score` int(5) NOT NULL DEFAULT '0',
  PRIMARY KEY (`id`),
  KEY `user_id` (`user_id`),
- CONSTRAINT `players_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+ CONSTRAINT `players_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE `categories` (
@@ -42,8 +42,8 @@ CREATE TABLE `categoryrecords` (
  `max_score` int(6) NOT NULL,
  KEY `player_id` (`player_id`),
  KEY `category_id` (`category_id`),
- CONSTRAINT `categoryrecords_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`),
- CONSTRAINT `categoryrecords_ibfk_2` FOREIGN KEY (`player_id`) REFERENCES `players` (`id`)
+ CONSTRAINT `categoryrecords_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE,
+ CONSTRAINT `categoryrecords_ibfk_2` FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE `questions` (
@@ -61,9 +61,9 @@ CREATE TABLE `questions` (
  KEY `user_id` (`user_id`),
  KEY `level_id` (`level_id`),
  KEY `category_id` (`category_id`),
- CONSTRAINT `questions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
- CONSTRAINT `questions_ibfk_2` FOREIGN KEY (`level_id`) REFERENCES `questionlevels` (`id`),
- CONSTRAINT `questions_ibfk_3` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`)
+ CONSTRAINT `questions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+ CONSTRAINT `questions_ibfk_2` FOREIGN KEY (`level_id`) REFERENCES `questionlevels` (`id`) ON DELETE CASCADE,
+ CONSTRAINT `questions_ibfk_3` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE `playerquestions` (
@@ -71,8 +71,8 @@ CREATE TABLE `playerquestions` (
  `question_id` int(11) NOT NULL,
  KEY `player_id` (`player_id`),
  KEY `question_id` (`question_id`),
- CONSTRAINT `playerquestions_ibfk_1` FOREIGN KEY (`player_id`) REFERENCES `players` (`id`),
- CONSTRAINT `playerquestions_ibfk_2` FOREIGN KEY (`question_id`) REFERENCES `questions` (`id`)
+ CONSTRAINT `playerquestions_ibfk_1` FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON DELETE CASCADE,
+ CONSTRAINT `playerquestions_ibfk_2` FOREIGN KEY (`question_id`) REFERENCES `questions` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- insert users--
