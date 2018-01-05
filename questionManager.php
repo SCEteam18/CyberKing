@@ -13,6 +13,12 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 	<link rel="stylesheet" type="text/css" href="styles.css">
 	<title>עריכת שאלות</title>
 	<script>
+
+	function show_add_row() {
+		document.getElementById('div_add_row').style.display = 'block';
+		document.getElementById('div_add_row_button').style.display = 'none';
+	}
+
 	function validateInput() {
 		var title = document.getElementById('title').value;
 		var answer1 = document.getElementById('answer1').value;
@@ -128,7 +134,7 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 	<br><br><br>
 	<div class="title">עריכת שאלות</div>
 	<br>
-	<div style='float:right;'>
+	<div id="div_add_row" style='float:right; display: none;'>
 		<br>
 		שאלה
 		<input class="add_row" id='title'>
@@ -181,13 +187,21 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 		רמה
 		<select style="height:25px;" id="category_id"><?php echo $levels ?></select>
 		<button style="margin-right:10px;" onclick="javascript:validateInput();">הוסף שאלה</button>
+
+	</div>
+	<font size="4" color="white">
+	<div id="div_add_row_button">
+		<div id="right_panel">
+			<button class="roundbutton" onclick="javascript:show_add_row();">+</button> 
+		</div>
+		<div style="float:right; padding: 10px 5px 0px 0px;">
+			הוסף שאלה
+		</div>
 	</div>
 	<br><br><br><br>
-	<font size="4" color="white">
-		<u>טבלת שאלות</u>
-		</font>
+	<u>טבלת שאלות</u>
+	</font>
 	<br><br>
-	
 	<table class="mainTable">
 		<tr>
 			<th>שאלה</th>

@@ -13,7 +13,12 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 	<link rel="stylesheet" type="text/css" href="styles.css">
 	<title>עריכת משתמשים</title>
 	<script>
-	
+		
+	function show_add_row() {
+		document.getElementById('div_add_row').style.display = 'block';
+		document.getElementById('div_add_row_button').style.display = 'none';
+	}
+
 	function validateInput() {
 		var username = document.getElementById('txt_username').value;
 		var password = document.getElementById('txt_password').value;
@@ -125,7 +130,7 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 	<br><br><br>
 	<div class="title">עריכת עובדי האתר</div>
 	<br>
-	<div style='float:right;'>
+	<div id="div_add_row" style='float:right; display: none;'>
 		<br>
 		שם משתמש
 		<input class="add_row" id='txt_username'>
@@ -140,12 +145,19 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 		<select style="height:25px;" id="type"><option value="editor" selected>editor</option><option value="manager">manager</option><option value="secretary">secretary</option></select>
 		<button style="margin-right:10px;" onclick="javascript:validateInput();">הוסף עובד</button>
 	</div>
-	<br><br><br><br><br>
 	<font size="4" color="white">
-		<u>טבלת העובדים</u>
-		</font>
+	<div id="div_add_row_button">
+		<div id="right_panel">
+			<button class="roundbutton" onclick="javascript:show_add_row();">+</button> 
+		</div>
+		<div style="float:right; padding: 10px 5px 0px 0px;">
+			הוסף עובד
+		</div>
+	</div>
+	<br><br><br><br>
+	<u>טבלת העובדים</u>
+	</font>
 	<br><br>
-	
 	<table class="mainTable">
 		<tr>
 			<th>שם משתמש</th>

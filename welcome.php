@@ -17,23 +17,16 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || !isset($_SES
 
 		var category_list = document.getElementById("category_list");
 		var tables = document.getElementsByTagName("table");
-		var player_info = document.getElementsByName("player_info");
 		//hide all high scores
-		document.getElementById('mainScore').style.display = 'none';
 		for (var i = 0; i < tables.length; i++) {
 			tables[i].style.display = 'none';
-		}
-		for (var i = 0; i < player_info.length; i++) {
-			player_info[i].style.display = 'none';
 		}
 		//show the selected highscore
 		if (category_list.value == 'all') {
 			document.getElementById('tbl_all_categories').style.display = 'block';
-			document.getElementById('mainScore').style.display = 'block';
 		}
 		else {
 			document.getElementById('tbl' + category_list.value).style.display = 'block';
-			document.getElementById('player_info' + category_list.value).style.display = 'block';
 		}
 	}
 
@@ -87,23 +80,23 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || !isset($_SES
 					  die("Connection failed: " . $conn->connect_error);
 					}
 					//check if user played already today
-					$sql = "SELECT p.question_num, p.score, p.startDate,
+					$sql = "SELECT p.id, p.question_num, p.startDate,
 								(select max(pq.id)
 									from PlayerQuestions pq
 									where pq.player_id = p.id)
 								as max_id
 							FROM Users u
 							JOIN Players p on p.user_id = u.id
-							where u.username = ?
-							ORDER BY p.score DESC";
+							where u.username = ?";
 					$stmt = $conn->prepare($sql);
 					$stmt->bind_param("s", $username);
 					$username = $_SESSION['username'];
 					$stmt->execute();
 					$stmt->store_result();
-					$stmt->bind_result($question_num, $score, $startDate, $question_id);
+					$stmt->bind_result($player_id, $question_num, $startDate, $question_id);
 					$stmt->fetch();
 					$stmt->close();
+					$_SESSION['player_id'] = $player_id;
 					$startDate = date_create_from_format('Y-m-d H:i:s', $startDate);
 					$now = getdate();
 
@@ -192,13 +185,6 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || !isset($_SES
 					}
 					?>
 					</table>
-					<?php 
-					echo "<div style='display:none;' name='player_info' id='player_info" . $category_ids[$i] . "'>";
-					?>
-						<br>
-						השיא שלך:
-						<?php echo $_SESSION['max_score']; ?>
-					</div>
 				<?php
 				}
 				?>
@@ -240,18 +226,14 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || !isset($_SES
 	        	?>
 	        	
 				</table>
-				<div id="mainScore">
-					<br>
-					השיא שלך:
-					<?php echo $_SESSION['max_score']; ?>
-				</div>
 				<br>
 			</font>
 			<?php
+
 				$sql = "SELECT u.username, p.score
 						FROM Players p
 						join users u on p.user_id = u.id
-						where u.enabled <> 0 and date(p.startDate) = date(SUBDATE(NOW(),1))
+						where p.score > 0 and u.enabled <> 0 and date(p.startDate) = date(SUBDATE(NOW(),1))
 						ORDER BY p.score DESC
 						limit 1";
 				$result = $conn->query($sql);
@@ -263,9 +245,13 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || !isset($_SES
 				    	$found_winner = 1;
 				    	break;
 				    }
+
 				    if ($found_winner == 0) {
 				    	echo "אין מצטיין יומי כי אף שחקן לא שיחק אתמול!";
 				    }
+				}
+				else {
+					echo "אין מצטיין יומי כי אף שחקן לא שיחק אתמול!";
 				}
 				$conn->close();
 				?>
