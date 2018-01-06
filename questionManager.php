@@ -54,7 +54,7 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
         xmlhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
 				if (this.responseText.includes('השאלה נוצרה בהצלחה')) {
-					alert("השאלה נוצרה בהצלחה \n" + this.responseText);
+					alert("השאלה נוצרה בהצלחה \n");
 					location.reload();
 				}
 				else {

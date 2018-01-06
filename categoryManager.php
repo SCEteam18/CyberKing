@@ -25,7 +25,7 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
         xmlhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
 				if (this.responseText.includes('הקטגוריה נוצרה בהצלחה')) {
-					alert("הקטגוריה נוצרה בהצלחה \n" + this.responseText);
+					alert("הקטגוריה נוצרה בהצלחה \n");
 					location.reload();
 				}
 				else {
