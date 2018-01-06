@@ -87,6 +87,28 @@ elseif ($table == "users") {
 		echo "הרשומה עודכנה";
 	}
 }
+elseif ($table=="questionlevels") {
+	
+	$stmt = $conn->prepare("UPDATE questionlevels set score = ? where id = ?");
+	$stmt->bind_param("ss", $score, $id_to_edit);
+	if (empty($_GET['p2'])) {
+	    $score = $_GET['p1'];
+	}
+	else {
+		$score = $_GET['p2'];	
+	}
+	if (is_numeric($score)) {
+	    $id_to_edit = $_GET['id'];
+	    $stmt->execute();
+	    $stmt->close();
+	    $conn->close();
+	    echo "הרשומה עודכנה";
+	}
+	else{
+		echo "שגיאה בקלט. אנא הכנס רק מספרים";
+	}
+	
+}
 else {
 	echo "טעות בטבלה";
 }

@@ -62,6 +62,21 @@ elseif ($table == "categories") {
 	$conn->close();
 	echo "הקטגוריה נוצרה בהצלחה";
 }
+elseif ($table == "questionlevels") {
+		
+	$stmt = $conn->prepare("INSERT INTO questionlevels (score) values (?)");
+	$stmt->bind_param("s", $score);
+	if (isset($_GET['score']) && is_numeric($_GET['score'])) {
+		$score = $_GET['score'];
+	}
+	else {
+		$score = 100;
+	}
+	$stmt->execute();
+	$stmt->close();
+	$conn->close();
+	echo "הרמה נוצרה בהצלחה";
+}
 else {
 	echo "טעות בטבלה";
 }

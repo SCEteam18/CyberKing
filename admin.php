@@ -34,7 +34,7 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 <button onclick="window.location='playerManager.php';" style="width: 100%;">שחקנים</button>
 <br>
 <button onclick="window.location='questionManager.php';" style="width: 100%;">שאלות</button><br>
-<button onclick="window.location='categoryManager.php';" style="width: 100%;">קטגוריות</button>
+<button onclick="window.location='categoryManager.php';" style="width: 100%;">רמות וקטגוריות</button>
 </div>
 </body>
 </html>

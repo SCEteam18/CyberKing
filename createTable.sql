@@ -102,6 +102,7 @@ INSERT INTO `users` (`id`, `username`, `password`, `email`, `firstname`, `lastna
 (15, 'good_food', '$2y$10$qXEekxcwWgkkb.XZSkDgROOO715OmHc4Q.lILy3gCTjk1kt3rTDW.', 'dfgfdg@csd.comsdf', 'good', 'food', 'player', 1);
 
 -- insert questionlevels--
+INSERT INTO `questionlevels` (`id`, `score`) VALUES (-1, '0');
 INSERT INTO `questionlevels` (`id`, `score`) VALUES (NULL, '100');
 INSERT INTO `questionlevels` (`id`, `score`) VALUES (NULL, '150');
 INSERT INTO `questionlevels` (`id`, `score`) VALUES (NULL, '200');
