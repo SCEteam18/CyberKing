@@ -51,7 +51,8 @@ if ($conn->connect_error) {
 		$conn->query($sql);
 		$_SESSION['score'] = 0;
 		$_SESSION['question_num'] = 1;
-
+		$time_passed = 0;
+		
 		// select a random level 1 question
 		$sql = "SELECT q.*, c.name as category_name
 				FROM questions AS q
