@@ -33,7 +33,7 @@ if ($table == "users") {
 	$conn->close();
 	echo "המשתמש נוצר בהצלחה";
 }
-if ($table == "questions") {
+elseif ($table == "questions") {
 	$stmt = $conn->prepare("INSERT INTO questions (title, answer1, answer2, answer3, answer4, right_answer, category_id, level_id, user_id) values (?, ?, ?, ?, ?, ?, ?, ?, (select id from users where username = ?))");
 	$stmt->bind_param("sssssssss", $title, $answer1, $answer2, $answer3, $answer4, $right_answer, $category_id, $level_id, $_SESSION['username']);
 	
@@ -53,16 +53,26 @@ if ($table == "questions") {
 	$conn->close();
 	echo "השאלה נוצרה בהצלחה";
 }
-if($table=="categories"){
+elseif($table=="categories"){
 	
 	$stmt = $conn->prepare("INSERT INTO categories (name) values (?)");
 	$stmt->bind_param("s", $name);
-
 	$name = $_GET['name'];
 	$stmt->execute();
 	$stmt->close();
 	$conn->close();
 	echo "הקטגוריה נוצרה בהצלחה";
+	
+}
+elseif($table=="questionlevels"){
+		
+	$stmt = $conn->prepare("INSERT INTO questionlevels (score) values (?)");
+	$stmt->bind_param("s", $score);
+	$score = $_GET['score'];
+	$stmt->execute();
+	$stmt->close();
+	$conn->close();
+	echo "הרמה נוצרה בהצלחה";
 	
 }
 else {

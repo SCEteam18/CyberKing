@@ -11,31 +11,57 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 <html>
 <head>
 	<link rel="stylesheet" type="text/css" href="styles.css">
-	<title>עריכת קטגוריות</title>
+	<title>עריכת קטגוריות ורמות שאלה</title>
 	<script>
-	function validateInput() {
-		var name = document.getElementById('name').value;
-		
-		if (name.length < 2) {
-	        alert("שם הקטגוריה קצר מדי");
-	        return false;
-	    }
+	function validateInput(tableType) {
+		if(tableType==1){
+		    var name = document.getElementById('name').value;
+		    if (name.length < 2) {
+	            alert("שם הקטגוריה קצר מדי");
+	            return false;
+	        }
 	   
-		var xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-				if (this.responseText.includes('הקטגוריה נוצרה בהצלחה')) {
-					alert("הקטגוריה נוצרה בהצלחה \n" + this.responseText);
-					location.reload();
-				}
-				else {
-					alert("שגיאה ביצירת קטגוריה: \n" + this.responseText);
-				}
-            }
-        };
+		    var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+		    		if (this.responseText.includes('הקטגוריה נוצרה בהצלחה')) {
+		    			alert("הקטגוריה נוצרה בהצלחה \n" + this.responseText);
+		    			location.reload();
+		    		}
+		    		else {
+		     			alert("שגיאה ביצירת קטגוריה: \n" + this.responseText);
+		    		}
+                }
+            };
 		
-        xmlhttp.open("GET", "addRow.php?table=categories&name=" + name , true);
-        xmlhttp.send();
+            xmlhttp.open("GET", "addRow.php?table=categories&name=" + name , true);
+            xmlhttp.send();
+		}
+		else{
+			
+			var score = document.getElementById('score').value;
+		    if (score < 1) {
+	            alert("ניקוד נמוך מדי");
+	            return false;
+	        }
+	   
+		    var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+		    		if (this.responseText.includes('הרמה נוצרה בהצלחה')) {
+		    			alert("הרמה נוצרה בהצלחה \n" + this.responseText);
+		    			location.reload();
+		    		}
+		    		else {
+		     			alert("שגיאה ביצירת רמה: \n" + this.responseText);
+	    			}
+                }
+            };
+		
+            xmlhttp.open("GET", "addRow.php?table=questionlevels&score=" + score , true);
+            xmlhttp.send();
+					
+		}	
 		
 	}
 	
@@ -44,7 +70,7 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 		textarea.style.display = "block";
 	}
 
-	function deleteRow(id) {
+	function deleteRow(tableType,id) {
 		var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -57,11 +83,19 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 				}
             }
         };
-        xmlhttp.open("GET", "deleteRow.php?table=categories&id=" + id, true);
-        xmlhttp.send();
+		if(tableType==1){
+            xmlhttp.open("GET", "deleteRow.php?table=categories&id=" + id, true);
+            xmlhttp.send();
+		}
+		else{
+		    xmlhttp.open("GET", "deleteRow.php?table=questionlevels&id=" + id, true);
+            xmlhttp.send();
+		
+		}
+			
 	}
 
-	function editRow(id) {
+	function editRow(tableType,id) {
 		var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -84,8 +118,16 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 
         //alert(params);
 
-        xmlhttp.open("GET", "editRow.php?table=categories&id=" + id + params, true);
-        xmlhttp.send();
+        if(tableType==1){
+			xmlhttp.open("GET", "editRow.php?table=categories&id=" + id + params, true);
+            xmlhttp.send();
+		}
+		else{
+			xmlhttp.open("GET", "editRow.php?table=questionlevels&id=" + id + params, true);
+            xmlhttp.send();
+			
+			
+		}
 	}
 	</script>
 </head>
@@ -101,14 +143,14 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 		<button onclick="window.location='logout.php';">יציאה</button>
 	</div>
 	<center>
-	<br><br><br>
-	<div class="title">עריכת קטגוריות</div>
+	<br><br><br>	
+	<div class="title">עריכת קטגוריות ורמות שאלה</div>
+	<br><br><br>	
+	<div id="left-right" >
+	<div id="left" style="width: 40%;float:left;margin:45px">
 	<br>
 	<div style='float:center;'>
-		<br>
-		קטגוריה
-		<input class="add_row" id='name'>
-		<br>
+		
 		
 		<?php
 			$db = include 'database.php';
@@ -122,8 +164,13 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 
 		?>
 		
-		<br>
-		<button style="margin-right:10px;" onclick="javascript:validateInput();">הוסף קטגוריה</button>
+		
+		
+        <div class="add">
+		<button style="margin-right:10px;" onclick="javascript:validateInput(1);">הוסף קטגוריה</button>
+		<br><br>
+		<input class="add_row" id='name'>
+		</div>
 		<br>
 	</div>
 	<br>
@@ -153,14 +200,91 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 				FROM categories";
 		$result = $conn->query($sql);
 		
+		//table type (1=categories,2=questionlevels)
+		$type1=1;
+		$type2=2;
+		
 		if ($result->num_rows > 0) {
 			while($row = $result->fetch_assoc()) {
 				echo "<tr>
 						<td><textarea name='" . $row['id'] . "' hidden>" . $row['name'] . "</textarea><span onclick='javascript:editText(this, this.parentNode.firstChild);'>" . shortenString($row['name']) . "</span></td>" .
                         "<td width='1%;'><span>". $row['id'] ."</span></td>" .						
-						"<td width='1%;'><button class='minibutton' onclick='javascript:deleteRow(" . $row['id'] . ");'>X</button></td>" .
-						"<td width='1%;'><button class='minibutton' onclick='javascript:editRow(" . $row['id'] . ");'>✓</button></td>
+						"<td width='1%;'><button class='minibutton' onclick='javascript:deleteRow(". $type1 ."," . $row['id'] . ");'>X</button></td>" .
+						"<td width='1%;'><button class='minibutton' onclick='javascript:editRow(". $type1 ."," . $row['id'] . ");'>✓</button></td>
 					</tr>";
+			}
+		} else {
+			//echo "0 results";
+		}
+	
+	?>
+	
+	</table>
+	</div>
+	<div id="right" style="width: 40%;float:right;margin:40px">
+		<br>
+	<div style='float:center;'>
+		<div class="add">
+		<button style="margin-right:10px;" onclick="javascript:validateInput(2);">הוסף רמה</button>
+		<br>הוסף ניקוד לרמה<br>
+		
+		<input class="add_row" id='score'>
+		</div>
+	</div>
+	<br>
+	<font size="4" color="white">
+		<u>טבלת רמות</u>
+		</font>
+	<br><br>
+	
+	<table class="mainTable">
+		<tr>
+			<th>רמה</th>
+			<th>ניקוד</th>
+			<th>מחיקה</th>	
+			<th>עדכון</th>
+		</tr>
+		<?php
+	     function bb($id){
+			session_start();
+            // If session variable is not set it will redirect to login page
+            if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['type'] != 'manager' && $_SESSION['type'] != 'editor')){
+            header("location: login.php");
+            exit;
+               }
+
+           
+            // Create connection
+            $db = include 'database.php';
+            $conn = new mysqli($db['servername'], $db['username'], $db['password'], $db['dbname']);
+            mysqli_set_charset($conn,'utf8');
+            // Check connection
+            if ($conn->connect_error) {
+         	die("Connection failed: " . $conn->connect_error);
+             }
+			 
+			$stmt = $conn->prepare("update questionlevels set id = -1 where id = ?");
+	        $stmt->bind_param("s",$id);    
+	        $stmt->execute();
+	        $stmt->close();
+	        $conn->close();
+	        echo "הרשומה נמחקה";
+		}
+		// get a list of questions
+		$sql = "SELECT *
+				FROM questionlevels";
+		$result = $conn->query($sql);
+		
+		if ($result->num_rows > 0) {
+			while($row = $result->fetch_assoc()) {
+				if($row['id']!=-1){
+				echo "<tr>			
+                        <td width='1%;'><span>". $row['id'] ."</span></td>" .	
+                        "<td><textarea name='" . $row['id'] . "' hidden>" . $row['score'] . "</textarea><span onclick='javascript:editText(this, this.parentNode.firstChild);'>" . shortenString($row['score']) . "</span></td>" .						
+						"<td width='1%;'><button class='minibutton' onclick='javascript:deleteRow(". $type2 ."," . $row['id'] . ");'>X</button></td>" .
+						"<td width='1%;'><button class='minibutton' onclick='javascript:editRow(". $type2 ."," . $row['id'] . ");'>✓</button></td>
+					</tr>";
+			}
 			}
 		} else {
 			//echo "0 results";
@@ -168,7 +292,8 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 		$conn->close();
 	?>
 	
-	</table>
+	</div>
+	</div>
 	<br>
 				
 </body>
