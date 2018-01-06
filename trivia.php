@@ -142,6 +142,7 @@ if ($conn->connect_error) {
 						document.location.href = "end.php";
 					}
 					else {
+						alert(response[0]);
 						location.reload();
 					}
 				}
