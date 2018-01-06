@@ -40,6 +40,7 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 		else{
 			
 			var score = document.getElementById('score').value;
+			if(!isNaN(score)){
 		    if (score < 1) {
 	            alert("ניקוד נמוך מדי");
 	            return false;
@@ -60,6 +61,8 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 		
             xmlhttp.open("GET", "addRow.php?table=questionlevels&score=" + score , true);
             xmlhttp.send();
+			}
+			else{ alert("שגיאה בקלט, אנא הכנס מספרים בלבד"); }
 					
 		}	
 		
