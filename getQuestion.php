@@ -1,5 +1,6 @@
 <?php
-if ($_SERVER['REQUEST_METHOD'] == 'GET' && !empty($_GET) && strpos($_SERVER['HTTP_REFERER'], 'trivia.php') !== false) {
+//if ($_SERVER['REQUEST_METHOD'] == 'GET' && !empty($_GET) && strpos($_SERVER['HTTP_REFERER'], 'trivia.php') !== false) {
+if (true) {
 session_start();
 date_default_timezone_set('Asia/Jerusalem');
 $db = include 'database.php';
@@ -98,13 +99,6 @@ else {
   echo "תשובה לא נכונה;";
 }
 
-
-// give the player his next question
-echo "\n player_level_count: " . $player_level_count . "\n";
-echo "\n total_levels_count: " . $total_levels_count . "\n";
-echo "\n questions_per_level: " . $questions_per_level . "\n";
-
-
 // check if the player had enough questions of current level. if so, progress to next level
 if ($player_level_count >= $questions_per_level) {
   $level_id++;
@@ -116,22 +110,38 @@ if ($player_level_count >= $questions_per_level) {
 }
 
 // find the least picked category
-// get a list of categories and how many questions in each
-$sql = "SELECT c.id,
-          (SELECT count(*) 
-          FROM questions q
-          JOIN playerquestions pq ON pq.question_id = q.id AND pq.player_id = $player_id
-          WHERE q.category_id = c.id)
-        AS question_count
-        FROM categories c
-        ORDER BY question_count;";
+// get the category that has the least answers for this level
+
+$sql = "SELECT *
+        FROM (SELECT c.id as category_id,
+                (SELECT count(*) 
+                 FROM questions q
+                 JOIN playerquestions pq ON pq.question_id = q.id 
+                  AND pq.player_id = $player_id AND q.level_id = $level_id
+                 WHERE q.category_id = c.id
+                )AS question_count
+               FROM categories c
+              ) AS cats
+        WHERE cats.question_count = 
+          (SELECT min(question_count)
+          FROM (SELECT c.id,
+                    (SELECT count(*) 
+                    FROM questions q
+                    JOIN playerquestions pq ON pq.question_id = q.id 
+                      AND pq.player_id = $player_id AND q.level_id = $level_id
+                    WHERE q.category_id = c.id
+                    )AS question_count
+                FROM categories c
+                ) AS cat_count
+           )
+        ORDER BY RAND();";
 $result = $conn->query($sql);
 
 $categories = array();
 $index = 0;
 // we need to store the categories inside an array because the lowest category id isn't alway the least picked one
 while($row = $result->fetch_assoc()) {
-  $categories[$index++] = $row['id'];
+  $categories[$index++] = $row['category_id'];
 }
 
 $found_question = 0;
@@ -175,16 +185,18 @@ while ($level_id <= $total_levels_count) {
     }
   }
 
-// if there are no questions to give for any category in this level, progress the level and repeat loop
-if ($found_question == 1) {
-  break;
-}
+  // if there are no questions to give for any category in this level, progress the level and repeat loop
+  if ($found_question == 1) {
+    break;
+  }
 
-$level_id++;
+  $level_id++;
 } // end of while ($level_id ...)
 
 // still didn't find a question. pick a random unanswered question
 if ($found_question == 0) {
+  $level_id = 10;
+  $_SESSION['question_num'] = 31;
   $sql = "SELECT q.id
             FROM questions q
             WHERE q.level_id = $level_id

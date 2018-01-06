@@ -40,6 +40,7 @@ if (isset($_SESSION['player_id']) && !empty($_SESSION['player_id'])) {
 			    WHERE cr.player_id = $player_id)
 			GROUP BY q.category_id
 			";
+	$conn->query($sql);
     $conn->close();
 }
 ?>

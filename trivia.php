@@ -49,7 +49,6 @@ if ($conn->connect_error) {
 		$conn->query($sql);
 		$sql = "DELETE FROM playerquestions WHERE player_id = $player_id";
 		$conn->query($sql);
-
 		$_SESSION['score'] = 0;
 		$_SESSION['question_num'] = 1;
 
@@ -134,9 +133,8 @@ if ($conn->connect_error) {
         xmlhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
 				if(this.responseText.includes("תשובה")) {
-
 					//alert(this.responseText);
-
+					//return;
 					var response = this.responseText.split(";");
 					if (response[1] == "1") {
 						document.location.href = "end.php";
