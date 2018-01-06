@@ -54,7 +54,8 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
         xmlhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
 				if (this.responseText.includes('השאלה נוצרה בהצלחה')) {
-					alert("השאלה נוצרה בהצלחה \n");
+					alert(this.responseText);
+					//alert("השאלה נוצרה בהצלחה \n");
 					location.reload();
 				}
 				else {
@@ -183,9 +184,9 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 		?>
 		<select style="height:25px;" id="right_answer"><?php echo $right_answers ?></select>
 		קטגוריה
-		<select style="height:25px;" id="level_id"><?php echo $categories ?></select>
+		<select style="height:25px;" id="category_id"><?php echo $categories ?></select>
 		רמה
-		<select style="height:25px;" id="category_id"><?php echo $levels ?></select>
+		<select style="height:25px;" id="level_id"><?php echo $levels ?></select>
 		<button style="margin-right:10px;" onclick="javascript:validateInput();">הוסף שאלה</button>
 
 	</div>
