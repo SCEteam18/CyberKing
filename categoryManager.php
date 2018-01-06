@@ -245,31 +245,7 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 			<th>עדכון</th>
 		</tr>
 		<?php
-	     function bb($id){
-			session_start();
-            // If session variable is not set it will redirect to login page
-            if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['type'] != 'manager' && $_SESSION['type'] != 'editor')){
-            header("location: login.php");
-            exit;
-               }
-
-           
-            // Create connection
-            $db = include 'database.php';
-            $conn = new mysqli($db['servername'], $db['username'], $db['password'], $db['dbname']);
-            mysqli_set_charset($conn,'utf8');
-            // Check connection
-            if ($conn->connect_error) {
-         	die("Connection failed: " . $conn->connect_error);
-             }
-			 
-			$stmt = $conn->prepare("update questionlevels set id = -1 where id = ?");
-	        $stmt->bind_param("s",$id);    
-	        $stmt->execute();
-	        $stmt->close();
-	        $conn->close();
-	        echo "הרשומה נמחקה";
-		}
+	    
 		// get a list of questions
 		$sql = "SELECT *
 				FROM questionlevels";
