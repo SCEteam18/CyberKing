@@ -23,10 +23,10 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || !isset($_SES
 		}
 		//show the selected highscore
 		if (category_list.value == 'all') {
-			document.getElementById('tbl_all_categories').style.display = 'block';
+			document.getElementById('tbl_all_categories').style.display = '';
 		}
 		else {
-			document.getElementById('tbl' + category_list.value).style.display = 'block';
+			document.getElementById('tbl' + category_list.value).style.display = '';
 		}
 	}
 
