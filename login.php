@@ -19,12 +19,12 @@ header('Content-Type: text/html; charset=utf-8');
 	<title></title>
 </head>
 <body>
-<center>
+<center><br><br>
 <div class="title">CyberKing</div>
 <div class="subtitle">חידון הסייבר הארצי</div>
 <br><br><br>
 <div class="container">
-  <form action="login.php" method="post">
+  <form action="login.php" method="post" style="margin-top:10px;">
     <input type="text" name="username" style="text-align: center;" placeholder="שם משתמש"/>
     <input type="password" name="password" style="text-align: center;" placeholder="סיסמה"/>
     <button style="width: 100%;">כניסה</button>
@@ -96,4 +96,3 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST)) {
   $conn->close();
 }
 ?>
-

@@ -10,6 +10,7 @@
   margin-right: 5px;
   box-sizing: border-box;
   font-size: 12px;
+  width: 120px;
 }
 
 .end {
@@ -62,8 +63,8 @@
   box-shadow: 3px 0 5px 0 rgba(0, 0, 0, 0.2), 0 3px 3px 0 rgba(0, 0, 0, 0.24);
   float:left;
   text-align:center;
-  color: red;
   border: 1px solid black;
+  color: #00b300;
   border-radius: 10px;
   width: 45%;
   background: rgba(255, 255, 255, 1);
@@ -74,7 +75,7 @@
   float:right;
   text-align:center;
   width: 45%;
-  color:#00b300;
+  color: #00b300;
   border: 1px solid black;
   border-radius: 10px;
   background: rgba(255, 255, 255, 1);
@@ -114,7 +115,7 @@
 .option {
   color: #f6f6f6;
   width: 300px;
-  height:20px;
+  height:30px;
   display: inline-block;
   padding: 10px 10px 10px 0;
   vertical-align: middle;
@@ -268,7 +269,7 @@ textarea:focus {
 }
 
 .container {
-  width: 350px;
+  width: 400px;
   margin: auto;
   position: relative;
   z-index: 1;
@@ -332,15 +333,29 @@ button:hover,.container button:active,.container button:focus {
   text-decoration: none;
 }
 
-
-
 body {
   background: #5276b8;
-  background: -webkit-linear-gradient(right, #5276b8, #6F8DC2);
-  background: -moz-linear-gradient(right, #5276b8, #6F8DC2);
-  background: -o-linear-gradient(right, #5276b8, #6F8DC2);
-  background: linear-gradient(to left, #5276b8, #6F8DC2);
+  background: -webkit-linear-gradient(right, #3F4D72, #6F8DC2);
+  background: -moz-linear-gradient(right, #3F4D72, #6F8DC2);
+  background: -o-linear-gradient(right, #3F4D72, #6F8DC2);
+  background: linear-gradient(to left, #3F4D72, #6F8DC2);
   font-family: "arial", sans-serif;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;      
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(
+  to bottom,
+  #3A4D72,
+  #3A4D72 50%,
+  #384A69 50%,
+  #384A69
+  );
+  background-size: 100% 14px;
+}
+
+.roundbutton {
+  display:block;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  box-shadow: 3px 0 5px 0 rgba(0, 0, 0, 0.2), 0 3px 3px 0 rgba(0, 0, 0, 0.24);
 }

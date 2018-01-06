@@ -53,6 +53,15 @@ elseif ($table == "questions") {
 	$conn->close();
 	echo "השאלה נוצרה בהצלחה";
 }
+elseif ($table == "categories") {
+	$stmt = $conn->prepare("INSERT INTO categories (name) values (?)");
+	$stmt->bind_param("s", $name);
+	$name = $_GET['name'];
+	$stmt->execute();
+	$stmt->close();
+	$conn->close();
+	echo "הקטגוריה נוצרה בהצלחה";
+}
 else {
 	echo "טעות בטבלה";
 }

@@ -2,12 +2,13 @@
 
 header('Content-Type: text/html; charset=utf-8');
 session_start();
+date_default_timezone_set('Asia/Jerusalem');
 // If session variable is not set it will redirect to login page
-if(!isset($_SESSION['username']) || empty($_SESSION['username'])){
-  header("location: login.php");
+if(!isset($_SESSION['player_id']) || empty($_SESSION['player_id'])) {
+  header("location: welcome.php");
   exit;
 }
-else{
+else {
 $db = include 'database.php';
 // Create connection
 $conn = new mysqli($db['servername'], $db['username'], $db['password'], $db['dbname']);
@@ -15,29 +16,91 @@ mysqli_set_charset($conn,'utf8');
 if ($conn->connect_error) {
 	die("Connection failed: " . $conn->connect_error);
 }
+	$player_id = $_SESSION['player_id'];
+	$sql = "SELECT p.score, p.question_num, p.startDate
+			FROM players p
+			WHERE p.id = $player_id";
+	$result = $conn->query($sql);
+	$row = $result->fetch_assoc();
+	$_SESSION['score'] = $row['score'];
+	$_SESSION['question_num'] = $row['question_num'];
+	$startDate = $row['startDate'];
+	$_SESSION['startDate'] = $startDate;
+	$str_startDate = $startDate;
+	$startDate = date_create_from_format('Y-m-d H:i:s', $startDate);
+	$str_now = date('Y-m-d H:i:s');
+	$now = date_create_from_format('Y-m-d H:i:s', $str_now);
+	
+	$played_today = !(strtotime($str_startDate) < strtotime("-1 day"));
+	if ($played_today) {
+		$time_passed = strtotime($str_now) - strtotime($str_startDate);
+	}
+	else {
+		$time_passed = 0;
+	}
 
-//check the current status of the player
-$result = $conn->query("select p.id, p.startDate, p.question_num from players p join users u on u.id = p.user_id and u.username = '" . $_SESSION['username'] . "'");
-if ($result->num_rows > 0) {
+	if ($played_today && $_SESSION['question_num'] > $db['questions_num_per_game']) {
+		header("location: welcome.php");
+  		exit;
+	}
+	else if (!$played_today || $_SESSION['question_num'] == "0") {
+	// didnt play today or never played at all? player can start a new game
+		$sql = "UPDATE players SET question_num = 1, startDate = now(), score = 0 WHERE id = $player_id";
+		$conn->query($sql);
+		$sql = "DELETE FROM playerquestions WHERE player_id = $player_id";
+		$conn->query($sql);
+		$_SESSION['score'] = 0;
+		$_SESSION['question_num'] = 1;
 
-    // output data of each row
-    while($row = $result->fetch_assoc()) {
-        $now = getdate();
-        $startDate = date_create_from_format('Y-m-d H:i:s', $row['startDate']);
-        $player_id = $row['id'];
-        $question_num = $row['question_num'];
-        //check if player already played the game
-        if ($startDate->format("d") == $now['mday'] && $startDate->format("m") == $now['mon'] && $startDate->format("Y") == $now['year'] && $question_num > $db['questions_num_per_game']) {
-			header("location: welcome.php");
-	  		exit;
-		}
-        break;
-    }
-}
+		// select a random level 1 question
+		$sql = "SELECT q.*, c.name as category_name
+				FROM questions AS q
+				JOIN categories c on c.id = q.category_id 
+				WHERE q.level_id = 1
+				ORDER BY RAND()
+				LIMIT 1";
+	}
+	else {
+		// the player rejoined the game, continue with same question
+		$sql = "SELECT q.*, c.name as category_name
+				FROM questions q
+				JOIN categories c on c.id = q.category_id 
+				WHERE q.id = 
+				 	(SELECT question_id 
+				 	FROM playerquestions pq
+				 	WHERE pq.player_id = " . $player_id . "
+				 	ORDER BY pq.id DESC
+				 	LIMIT 1)";
+	}
 
-//$result = $conn->query("delete from playerquestions where player_id = " . $player_id);
+	$result = $conn->query($sql);
 
-}
+	if ($result->num_rows > 0) {
+		$row = $result->fetch_assoc();
+		$question_id = $row["id"];
+		$level_id = $row["level_id"];
+		$category_name = $row["category_name"];
+		$title = $row["title"];
+		$answer1 = $row["answer1"];
+		$answer2 = $row["answer2"];
+		$answer3 = $row["answer3"];
+		$answer4 = $row["answer4"];
+
+	    // add the question to player's history
+		$sql = "INSERT INTO playerquestions (player_id, question_id)
+				SELECT * FROM (SELECT $player_id as pid, $question_id as qid) AS tmp
+				WHERE NOT EXISTS (
+				    SELECT player_id, question_id 
+				    FROM playerquestions 
+				    WHERE player_id = $player_id and question_id = $question_id
+				) LIMIT 1;";
+		$conn->query($sql);
+	}
+	else {
+		echo "אין יותר שאלות במאגר";
+	}
+	$conn->close();
+} // end of else of !isset($_SESSION['username'])
 ?>
 <!DOCTYPE html>
 <html lang="he">
@@ -47,89 +110,73 @@ if ($result->num_rows > 0) {
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	</head>
 	<script>
-	var score= 0;
-	var counter=0;
-	var interval=0;
-	var currentQuestion = 1;
-	var ans = 1;
-	var level = 1;
+	var score = <?php echo $_SESSION['score']; ?>;
+	var counter = <?php echo $time_passed; ?>;
+	var interval = 0;
+	var currentQuestion = <?php echo $_SESSION['question_num']; ?>;
+	var level = <?php echo $level_id; ?>;
+	var category_name = <?php echo "'$category_name'"; ?>;
+	var title = <?php echo "'$title'"; ?>;
+	var ans1 = <?php echo "'$answer1'"; ?>;
+	var ans2 = <?php echo "'$answer2'"; ?>;
+	var ans3 = <?php echo "'$answer3'"; ?>;
+	var ans4 = <?php echo "'$answer4'"; ?>;
 	
-	function loadQuestion() {
-		var xmlhttp = new XMLHttpRequest();
+	function NextQuestion() {
+        var selected=document.querySelector('input[type=radio]:checked');
+		if(!selected) {
+            alert('אנא בחר תשובה!');
+            return;
+        }
+
+        var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
-				if(this.responseText.includes("question")){
+				if(this.responseText.includes("תשובה")) {
+					//alert(this.responseText);
+					//return;
 					var response = this.responseText.split(";");
-					document.getElementById('question').innerHTML = response[1];
-					document.getElementById('opt1').textContent = response[2];
-					document.getElementById('opt2').textContent = response[3];
-					document.getElementById('opt3').textContent = response[4];
-					document.getElementById('opt4').textContent = response[5];
-					ans = response[6];
-					level = response[7];
-					document.getElementById('level').textContent = "רמת קושי:" + level;
+					if (response[1] == "1") {
+						document.location.href = "end.php";
+					}
+					else {
+						alert(response[0]);
+						location.reload();
+					}
 				}
 				else {
 					alert("שגיאה בעמוד. נא לנסות מאוחר יותר\n" + this.responseText);
-					document.location.href = "welcome.php";
+					//document.location.href = "welcome.php";
 				}
             }
         };
-        xmlhttp.open("GET", "getQuestion.php", true);
+
+        xmlhttp.open("GET", "getQuestion.php?ans=" + selected.value, true);
         xmlhttp.send();
-	}
-	
-	function NextQuestion(){
-			var opt1 = document.getElementById('opt1');
-			var opt2 = document.getElementById('opt2');
-			var opt3 = document.getElementById('opt3');
-			var opt4 = document.getElementById('opt4');
-			var result = document.getElementById('result');
-			var next= document.getElementById('nextButton');
-			var questionE = document.getElementById('question');
-			var container = document.getElementById('triviaContainer');
-            var selected=document.querySelector('input[type=radio]:checked');
-
-            if(!selected){
-	            alert('אנא בחר תשובה!');
-	            return;
-            }
-            clearInterval(interval);
-            var penalty = Math.floor(counter/60) * 10;
-            if (penalty > 100)
-            	penalty = 100;
-            var new_score = 0;
-
-            if(selected.value == ans){
-	        	new_score = (100 + level*10) - penalty;
-            	score += new_score;
-            }
-            selected.checked = false;
-            counter=0;
-			setTimer();
-            scor.textContent = score;
-            currentQuestion++;
-
-            if(currentQuestion == NumberOfQuestions - 1){
-         	     nextButton.textContent = 'Finish';
-				 nextButton.name='act';
-            }
-            if(currentQuestion == NumberOfQuestions){
-				window.location.href = "end.php?score=" + score;
-	            container.style.display = 'none';
-	            resultCont.style.display = '';
-	            resultCont.textContent = 'Your Score: ' + score;
-            }
-			document.getElementById("questionNumber").innerHTML = "שאלה " + currentQuestion;
-            loadQuestion();
-        }
+    }
 		
 	</script>
-	<body dir="rtl" onload="javascript:loadQuestion();">
+	<body dir="rtl">
+	<div style="float:left; position: relative;">
+		<font size="4" color="white">
+		ברוכים הבאים,
+		<?php 
+			echo $_SESSION['firstname'] . " " . $_SESSION['lastname'];
+		?>
+		</font>
+		<button onclick="window.location='welcome.php';" style="margin-right: 15px;">תפריט ראשי</button>
+		<button onclick="window.location='logout.php';">יציאה</button>
+	</div>
+	<br><br><br>
 	<center>
     <div class="title">טריוויה</div>
-    <div id="questionNumber" class="subtitle">שאלה 1</div>
-	<div id="level" class="subtitle">רמת קושי: 1</div>
+    <br>
+    <div style="width: 600px;">
+		 <div class="subtitle" style="float: left; width: 200px;"><?php echo "קטגוריה: " . $category_name; ?></div>
+		 <div class="subtitle" style="float: left; width: 200px;"><?php echo "רמת קושי: " . $level_id; ?></div>
+		 <div class="subtitle" style="float: left; width: 200px;"><?php echo "שאלה: " . $_SESSION['question_num']; ?></div>
+		 <br style="clear: left;" />
+	</div>
     <br>
 	<div class="info">
 	    <div class="score"><h2>ניקוד</h2><h3 id="score"></h3></div>
@@ -157,19 +204,17 @@ if ($result->num_rows > 0) {
 		<button type="submit" name="" id="nextButton" onclick="NextQuestion()" >שאלה הבאה</button>
 		
     </div>
-		
-	<div id="result" class="container result" style="display:none;">
-	</div>
 	
 	<script>
 	var tim=document.getElementById('time');
 	var scor=document.getElementById('score');
-	scor.textContent=score;
+	scor.textContent = score;
     tim.textContent="00:00:00";
-	var NumberOfQuestions = 30;
+	var NumberOfQuestions = <?php echo $db['questions_num_per_game']; ?>;
 
 	setTimer();
 
+	//fixes time format by adding a zero
 	function pad(val) {
 		var valString = val + "";
 		if (valString.length < 2) {
@@ -188,15 +233,20 @@ if ($result->num_rows > 0) {
 			if(counter<60){
 				tim.style.color='#00b300';
 			}
-			if(counter>120){
-				tim.style.color='#ff3300';
-			}
-			if(counter>60&&counter<120){
+			if(counter>60&&counter<240){
 				tim.style.color='#0066ff';
+			}
+			if(counter>240){
+				tim.style.color='#ff3300';
 			}
 			}, 1000);
 	}
+
+	document.getElementById('question').innerHTML = title;
+	document.getElementById('opt1').textContent = ans1;
+	document.getElementById('opt2').textContent = ans2;
+	document.getElementById('opt3').textContent = ans3;
+	document.getElementById('opt4').textContent = ans4;
     </script>
-	
 	</body>
 </html>
