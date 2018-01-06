@@ -1,6 +1,6 @@
 <?php
-//if ($_SERVER['REQUEST_METHOD'] == 'GET' && !empty($_GET) && strpos($_SERVER['HTTP_REFERER'], 'trivia.php') !== false) {
-if (true) {
+if ($_SERVER['REQUEST_METHOD'] == 'GET' && !empty($_GET) && strpos($_SERVER['HTTP_REFERER'], 'trivia.php') !== false) {
+
 session_start();
 date_default_timezone_set('Asia/Jerusalem');
 $db = include 'database.php';
