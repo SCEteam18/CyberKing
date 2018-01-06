@@ -2,7 +2,7 @@
 header('Content-Type: text/html; charset=utf-8');
 session_start();
 // If session variable is not set it will redirect to login page
-if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['type'] != 'manager' && $_SESSION['type'] != 'editor' && $_SESSION['type'] != 'secretary')){
+if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['type'] != 'manager' && $_SESSION['type'] != 'editor' && $_SESSION['type'] != 'secretary')) {
   header("location: login.php");
   exit;
 }
@@ -29,11 +29,12 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 <div class="subtitle">עמוד ניהול ראשי</div>
 <br><br><br>
 <div class="container">
-<button onclick="window.location='userManager.php';" style="width: 100%;">ניהול עובדים</button>
+<button onclick="window.location='userManager.php';" style="width: 100%;">עובדים</button>
 <br>
-<button onclick="window.location='topTen.php';" style="width: 100%;">שחקנים מובילים</button>
+<button onclick="window.location='playerManager.php';" style="width: 100%;">שחקנים</button>
 <br>
-<button onclick="window.location='questionManager.php';" style="width: 100%;">ניהול שאלות</button>
+<button onclick="window.location='questionManager.php';" style="width: 100%;">שאלות</button><br>
+<button onclick="window.location='categoryManager.php';" style="width: 100%;">קטגוריות</button>
 </div>
 </body>
 </html>

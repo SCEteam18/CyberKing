@@ -23,7 +23,10 @@ $sql = "SELECT q.level_id, q.right_answer, ql.score AS level_score, pq.id AS las
           (SELECT count(*) 
             FROM playerquestions pq3
             JOIN questions q2 ON q2.id = pq3.question_id
-            WHERE pq3.player_id = $player_id AND q2.level_id = q.level_id) AS player_level_count
+            WHERE pq3.player_id = $player_id AND q2.level_id = q.level_id) AS player_level_count,
+          (SELECT startDate
+            FROM players
+            WHERE id = $player_id) AS startDate
         FROM playerquestions pq
         JOIN questions q ON q.id = pq.question_id
         JOIN questionlevels ql ON ql.id = q.level_id
@@ -33,6 +36,8 @@ $sql = "SELECT q.level_id, q.right_answer, ql.score AS level_score, pq.id AS las
 
 $result = $conn->query($sql);
 $row = $result->fetch_assoc();
+$startDate = $row['startDate'];
+$_SESSION['startDate'] = $startDate;
 $level_score = $row['level_score'];
 $total_category_count = $row['total_category_count'];
 $total_levels_count = $row['total_levels_count'];
@@ -75,7 +80,10 @@ if ($right_answer == $_GET['ans']) {
   $sql = "UPDATE playerquestions
           SET score = $question_score
           WHERE id = $last_question ;";
-  $result = $conn->query($sql);
+  $conn->query($sql);
+
+
+
   $sql = "UPDATE players
           SET score = $score, startDate = now(), question_num = " . ($_SESSION['question_num'] + 1) . 
           " WHERE id = $player_id ;";

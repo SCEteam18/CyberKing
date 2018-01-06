@@ -4,8 +4,8 @@ header('Content-Type: text/html; charset=utf-8');
 session_start();
 date_default_timezone_set('Asia/Jerusalem');
 // If session variable is not set it will redirect to login page
-if(!isset($_SESSION['username']) || empty($_SESSION['username'])) {
-  header("location: login.php");
+if(!isset($_SESSION['player_id']) || empty($_SESSION['player_id'])) {
+  header("location: welcome.php");
   exit;
 }
 else {
@@ -16,17 +16,15 @@ mysqli_set_charset($conn,'utf8');
 if ($conn->connect_error) {
 	die("Connection failed: " . $conn->connect_error);
 }
-
+	$player_id = $_SESSION['player_id'];
 	$sql = "SELECT p.score, p.question_num, p.startDate
 			FROM players p
-			WHERE p.id = ?";
-	$stmt = $conn->prepare($sql);
-	$stmt->bind_param("s", $player_id);
-	$player_id = $_SESSION['player_id'];
-	$stmt->execute();
-	$stmt->store_result();
-	$stmt->bind_result($_SESSION['score'], $_SESSION['question_num'], $startDate);
-	$stmt->fetch();
+			WHERE p.id = $player_id";
+	$result = $conn->query($sql);
+	$row = $result->fetch_assoc();
+	$_SESSION['score'] = $row['score'];
+	$_SESSION['question_num'] = $row['question_num'];
+	$startDate = $row['startDate'];
 	$_SESSION['startDate'] = $startDate;
 	$str_startDate = $startDate;
 	$startDate = date_create_from_format('Y-m-d H:i:s', $startDate);
@@ -47,14 +45,11 @@ if ($conn->connect_error) {
 	}
 	else if (!$played_today || $_SESSION['question_num'] == "0") {
 	// didnt play today or never played at all? player can start a new game
-		$stmt = $conn->prepare("UPDATE players SET question_num = 1, startDate = now(), score = 0 WHERE id = ?");
-		$stmt->bind_param("s", $player_id);
-		$player_id = $_SESSION['player_id'];
-		$stmt->execute();
-		$stmt = $conn->prepare("DELETE FROM playerquestions WHERE player_id = ?");
-		$stmt->bind_param("s", $player_id);
-		$player_id = $_SESSION['player_id'];
-		$stmt->execute();
+		$sql = "UPDATE players SET question_num = 1, startDate = now(), score = 0 WHERE id = $player_id";
+		$conn->query($sql);
+		$sql = "DELETE FROM playerquestions WHERE player_id = $player_id";
+		$conn->query($sql);
+
 		$_SESSION['score'] = 0;
 		$_SESSION['question_num'] = 1;
 
@@ -105,8 +100,6 @@ if ($conn->connect_error) {
 	else {
 		echo "אין יותר שאלות במאגר";
 	}
-
-	$stmt->close();
 	$conn->close();
 } // end of else of !isset($_SESSION['username'])
 ?>
@@ -141,10 +134,10 @@ if ($conn->connect_error) {
         xmlhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
 				if(this.responseText.includes("תשובה")) {
-					
-					var response = this.responseText.split(";");
 
-					alert(this.responseText);
+					//alert(this.responseText);
+
+					var response = this.responseText.split(";");
 					if (response[1] == "1") {
 						document.location.href = "end.php";
 					}

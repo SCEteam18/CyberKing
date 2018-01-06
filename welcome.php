@@ -13,7 +13,7 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || !isset($_SES
 	
 	<link rel="stylesheet" type="text/css" href="styles.css">
 	<script>
-	function changeHiscores() {
+	function changeHighcores() {
 
 		var category_list = document.getElementById("category_list");
 		var tables = document.getElementsByTagName("table");
@@ -66,7 +66,7 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || !isset($_SES
 				<font size="4">
 				ברוכים הבאים,
 				<br>
-				<?php 
+				<?php
 					echo $_SESSION['firstname'] . " " . $_SESSION['lastname'] . "<br><br>";
 				?>
 				</font>
@@ -75,7 +75,6 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || !isset($_SES
 					// Create connection
 					$conn = new mysqli($db['servername'], $db['username'], $db['password'], $db['dbname']);
 					mysqli_set_charset($conn,'utf8');
-					// Check connection
 					if ($conn->connect_error) {
 					  die("Connection failed: " . $conn->connect_error);
 					}
@@ -144,14 +143,14 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || !isset($_SES
 				<br><br>
 				<font size="2">
 				בחר קטגוריה:
-				<select id="category_list" onchange="javascript:changeHiscores();"><option value="all">כל הקטגוריות</option><?php echo $categories; ?></select>
+				<select id="category_list" onchange="javascript:changeHighcores();"><option value="all">כל הקטגוריות</option><?php echo $categories; ?></select>
 				<br><br>
 
 				<?php
 				// create an invisible table for each category highscore
 				for($i = 0; $i < $cat_array_length; $i++)
 				{
-				    echo "<table class='mainTable' id='tbl" . $category_ids[$i] . "' style='display: none;'>
+				    echo "<table class='mainTable' id='tbl" . $category_ids[$i] . "' style='display: none; width:100%;'>
 					<tr>
 						<th>מקום</th>
 						<th>משתמש</th>
@@ -176,7 +175,7 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || !isset($_SES
 					    		}
 					    	}
 					    	elseif ($place <= 10) {
-					        	echo "<tr><td>" . $place. "</td><td style='width:150px;'>" . $row["username"] . "</td><td>" . $row["max_score"] . "</tr>";
+					        	echo "<tr><td>" . $place. "</td><td style='width:150px;'>" . $row["username"] . "</td><td>" . $row["max_score"] . "</td></tr>";
 					    	}
 					    	$place++;
 					    }
@@ -189,7 +188,7 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || !isset($_SES
 				}
 				?>
 
-				<table class="mainTable" id="tbl_all_categories">
+				<table class="mainTable" id="tbl_all_categories" style="width:100%;">
 					<tr>
 						<th>מקום</th>
 						<th>משתמש</th>
@@ -227,8 +226,8 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || !isset($_SES
 	        	
 				</table>
 				<br>
-			</font>
-			<?php
+				</font>
+				<?php
 
 				$sql = "SELECT u.username, p.score
 						FROM Players p

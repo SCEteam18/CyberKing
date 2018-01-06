@@ -134,7 +134,7 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 	<br><br><br>
 	<div class="title">עריכת שאלות</div>
 	<br>
-	<div id="div_add_row" style='float:right; display: none;'>
+	<div id="div_add_row" style='float:right; display: none; color:white;'>
 		<br>
 		שאלה
 		<input class="add_row" id='title'>
@@ -218,8 +218,8 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 		<?php
 		
 		function shortenString($str){
-			if (strlen($str) > 50){
-				$str = substr($str, 0, 50) . "...";
+			if (mb_strlen($str) > 50){
+				$str = mb_substr($str, 0, 50) . "...";
 			}
 			return $str;
 		}

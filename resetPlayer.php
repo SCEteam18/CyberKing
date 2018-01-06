@@ -7,9 +7,12 @@ if ($conn->connect_error) {
 	die("Connection failed: " . $conn->connect_error);
 }
 
-
-// select player's last question
-$sql = "update players set startDate = '2017-01-01 00:00' where id = 3";
+if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+	$sql = "update players set startDate = now(), question_num = 0, score = 0 where id = " . $_GET['id'];
+}
+else {
+	$sql = "update players set startDate = now(), question_num = 0, score = 0 where id = 3";
+}
 
 $result = $conn->query($sql);
 

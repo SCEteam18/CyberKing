@@ -19,13 +19,35 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 		document.getElementById('div_add_row_button').style.display = 'none';
 	}
 
-	function validateInput() {
+	function addUser() {
 		var username = document.getElementById('txt_username').value;
 		var password = document.getElementById('txt_password').value;
 		var firstname = document.getElementById('txt_firstname').value;
 		var lastname = document.getElementById('txt_lastname').value;
 		var email = document.getElementById('txt_email').value;
 		var type = document.getElementById('type').value;
+		if (validateInput(true, username, password, firstname, lastname, email)) {
+			
+			var xmlhttp = new XMLHttpRequest();
+	        xmlhttp.onreadystatechange = function() {
+	            if (this.readyState == 4 && this.status == 200) {
+					if (this.responseText.includes('המשתמש נוצר בהצלחה')) {
+						alert("המשתמש נוצר בהצלחה");
+						location.reload();
+					}
+					else {
+						alert("שגיאה ביצירת משתמש: \n" + this.responseText);
+					}
+	            }
+	        };
+	        xmlhttp.open("GET", "addRow.php?table=users&username=" + username + "&password="+password+ "&firstname="+firstname+ "&lastname="+lastname+ "&email="+email + "&type="+type, true);
+	        xmlhttp.send();
+	        return true;
+		}
+		return false;
+	}
+
+	function validateInput(pwd, username, password, firstname, lastname, email) {
 		
 		if (firstname.length < 2) {
 	        alert("נא למלא לפחות 2 תווים בשדה שם פרטי");
@@ -39,7 +61,7 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 	        alert("נא למלא לפחות 5 תווים בשדה שם המשתמש");
 	        return false;
 	    }
-	    if (password.length < 5) {
+	    if (pwd && password.length < 5) {
 	        alert("נא למלא לפחות 5 תווים בשדה של סיסמה");
 	        return false;
 	    }
@@ -53,21 +75,7 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 	        	return false;
 	    	}
 	    }
-		
-		var xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-				if (this.responseText.includes('המשתמש נוצר בהצלחה')) {
-					alert("המשתמש נוצר בהצלחה");
-					location.reload();
-				}
-				else {
-					alert("שגיאה ביצירת משתמש: \n" + this.responseText);
-				}
-            }
-        };
-        xmlhttp.open("GET", "addRow.php?table=users&username=" + username + "&password="+password+ "&firstname="+firstname+ "&lastname="+lastname+ "&email="+email + "&type="+type, true);
-        xmlhttp.send();
+	    return true;
 	}
 	
 	function validateEmail(email) {
@@ -93,25 +101,46 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 	}
 
 	function editRow(id) {
-		var xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-				alert("רשומה " + id + " עודכנה בהצלחה");
-				location.reload();
-            }
-        };
+		var username = document.getElementById('user_' + id).value;
+		var password = document.getElementById('pwd_' + id).value;
+		var firstname = document.getElementById('fname_' + id).value;
+		var lastname = document.getElementById('lname_' + id).value;
+		var email = document.getElementById('email_' + id).value;
 
-        var elements = document.getElementsByName(id);
-        var params = "";
+		var validate_password = true;
+		if (password.length == 0) {
+			validate_password = false;
+		}
+		if (validateInput(validate_password, username, password, firstname, lastname, email)) {
 
-        for(var i=0;i<elements.length;i++){
-        	params += "&p" + (i+1) + "=" + elements[i].value;
-        }
-        
-        //alert(params);
+			var xmlhttp = new XMLHttpRequest();
+	        xmlhttp.onreadystatechange = function() {
+	            if (this.readyState == 4 && this.status == 200) {
+	            	if (this.responseText.includes("הרשומה עודכנה")) {
+						alert("רשומה " + id + " עודכנה בהצלחה");
+						location.reload();
+					}
+					else {
+						alert(this.responseText);
+					}
+	            }
+	        };
 
-        xmlhttp.open("GET", "editRow.php?table=users&id=" + id + params, true);
-        xmlhttp.send();
+	        var elements = document.getElementsByName(id);
+	        var params = "";
+
+	        for(var i=0;i<elements.length;i++){
+	        	params += "&p" + (i+1) + "=" + elements[i].value;
+	        }
+	        
+	        //alert(params);
+
+	        xmlhttp.open("GET", "editRow.php?table=users&id=" + id + params, true);
+	        xmlhttp.send();
+    	}
+    	else {
+    		alert('הכנס סיסמה ארוכה יותר');
+    	}
 	}
 	</script>
 </head>
@@ -130,7 +159,7 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 	<br><br><br>
 	<div class="title">עריכת עובדי האתר</div>
 	<br>
-	<div id="div_add_row" style='float:right; display: none;'>
+	<div id="div_add_row" style='float:right; display: none; color:white;'>
 		<br>
 		שם משתמש
 		<input class="add_row" id='txt_username'>
@@ -143,7 +172,7 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 		מייל
 		<input class="add_row" id='txt_email'>
 		<select style="height:25px;" id="type"><option value="editor" selected>editor</option><option value="manager">manager</option><option value="secretary">secretary</option></select>
-		<button style="margin-right:10px;" onclick="javascript:validateInput();">הוסף עובד</button>
+		<button style="margin-right:10px;" onclick="javascript:addUser();">הוסף עובד</button>
 	</div>
 	<font size="4" color="white">
 	<div id="div_add_row_button">
@@ -170,12 +199,14 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 			<th>עדכון</th>
 		</tr>
 		<?php
+		
 		function shortenString($str){
-			if (strlen($str) > 50){
-				$str = substr($str, 0, 50) . "...";
+			if (mb_strlen($str) > 50){
+				$str = mb_substr($str, 0, 50) . "...";
 			}
 			return $str;
 		}
+
 		$db = include 'database.php';
 		// Create connection
 		$conn = new mysqli($db['servername'], $db['username'], $db['password'], $db['dbname']);
@@ -194,11 +225,11 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 		if ($result->num_rows > 0) {
 			while($row = $result->fetch_assoc()) {
 				echo "<tr>
-						<td><textarea name='" . $row['id'] . "' hidden>" .  $row['username'] . "</textarea><span onclick='javascript:editText(this, this.parentNode.firstChild);'>" . $row['username'] . "</span></td>" . 
-						"<td><input name='" . $row['id'] . "'></input></td>" . 
-						"<td><textarea name='" . $row['id'] . "' hidden>". $row['email'] ."</textarea><span onclick='javascript:editText(this, this.parentNode.firstChild);'>" . $row['email'] . "</span></td>" . 
-						"<td><textarea name='" . $row['id'] . "' hidden>". $row['firstname'] ."</textarea><span onclick='javascript:editText(this, this.parentNode.firstChild);'>" . $row['firstname'] . "</span></td>" . "
-						<td><textarea name='" . $row['id'] . "' hidden>". $row['lastname'] ."</textarea><span onclick='javascript:editText(this, this.parentNode.firstChild);'>" . $row['lastname'] . "</span></td>" . 
+						<td><textarea id='user_" . $row['id'] . "' name='" . $row['id'] . "' hidden>" .  $row['username'] . "</textarea><span onclick='javascript:editText(this, this.parentNode.firstChild);'>" . $row['username'] . "</span></td>" . 
+						"<td><input id='pwd_" . $row['id'] . "' name='" . $row['id'] . "'></input></td>" . 
+						"<td><textarea id='email_" . $row['id'] . "' name='" . $row['id'] . "' hidden>". $row['email'] ."</textarea><span onclick='javascript:editText(this, this.parentNode.firstChild);'>" . $row['email'] . "</span></td>" . 
+						"<td><textarea id='fname_" . $row['id'] . "' name='" . $row['id'] . "' hidden>". $row['firstname'] ."</textarea><span onclick='javascript:editText(this, this.parentNode.firstChild);'>" . $row['firstname'] . "</span></td>" . "
+						<td><textarea id='lname_" . $row['id'] . "' name='" . $row['id'] . "' hidden>". $row['lastname'] ."</textarea><span onclick='javascript:editText(this, this.parentNode.firstChild);'>" . $row['lastname'] . "</span></td>" . 
 						"<td><select name='" . $row['id'] . "'>" . str_replace(">" . $row['type'], " selected>" . $row['type'], $permissions) . "</select></td>" .
 						"<td width='1%;'><button class='minibutton' onclick='javascript:deleteRow(" . $row['id'] . ");'>X</button></td>" .
 						"<td width='1%;'><button class='minibutton' onclick='javascript:editRow(" . $row['id'] . ");'>✓</button></td>
