@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Jasmine Spec Runner v2.8.0</title>
+
+  <link rel="shortcut icon" type="image/png" href="lib/jasmine-2.8.0/jasmine_favicon.png">
+  <link rel="stylesheet" href="lib/jasmine-2.8.0/jasmine.css">
+
+  <script src="lib/jasmine-2.8.0/jasmine.js"></script>
+  <script src="lib/jasmine-2.8.0/jasmine-html.js"></script>
+  <script src="lib/jasmine-2.8.0/boot.js"></script>
+  <script src="../jquery-3.2.1.min.js"></script>
+  
+  <script src = "src/validateForm.js"></script> 
+  <script src = "src/wrongPassword.js"></script>
+  <script src = "src/validateDeleteUser.js"></script>  
+  <script src = "src/validateQuestion.js"></script> 
+  <script src = "src/validateEditQuestion.js"></script> 
+  <script src = "src/validateChangeHighscores.js"></script> 
+  
+  <script src = "spec/wrongPasswordSpec.js"></script> 
+  <script src = "spec/validateFormSpec.js"></script> 
+  <script src = "spec/validateQuestionSpec.js"></script> 
+  <script src = "spec/validateDeleteUserSpec.js"></script>
+  <script src = "spec/validateEditQuestionSpec.js"></script> 
+  <script src = "spec/validateChangeHighscoresSpec.js"></script> 
+
+</head>
+
+<body>
+<div style='display:none;'>
+	<form action="register.php" onsubmit="return validateForm();" method="post" name="registerForm">
+	  <input type="text" id="firstname" name="firstname" placeholder="שם פרטי" value="test1"/>
+	  <input type="text" id="lastname" name="lastname" placeholder="שם משפחה" value="test1"/>
+	  <input type="text" id="username" name="username" placeholder="שם משתמש" value="test1"/>
+	  <input type="password" id="password" name="password" placeholder="סיסמה" value="test1"/>
+	  <input type="text" id="email" name="email" placeholder="כתובת מייל" value="test1@gmail.com"/>
+	  <img id="captcha_field" alt="CAPTCHA" />
+	  <input type="text" id="captcha" name="captcha" placeholder="הכנס את הקוד הרשום למעלה" value="test"/>
+	  
+	</form>
+	
+</div>
+תוצאת בדיקה:
+<br>
+<div id="error_msg" style="color: red;"></div>
+<br><br>
+<div style='display:none;'>
+	<form action="questionManager.php" onsubmit="return validateInput();return askDelete();" method="post" name="validateQuestion">
+	<input type="text" id="title" name="title" placeholder="שאלה" value="test2"/>
+	<input type="text" id="answer1" name="answer1" placeholder="תשובה 1" value="test2"/>
+	<input type="text" id="answer2" name="answer2" placeholder="תשובה 2" value="test2"/>
+	<input type="text" id="answer3" name="answer3" placeholder="תשובה 3" value="test2"/>
+	<input type="text" id="answer4" name="answer4" placeholder="תשובה 4" value="test2"/>
+	
+	<input type="text" id="right_answer" name="right_answer" placeholder="תשובה נכונה" />
+	<input type="text" id="category_id" name="category_id" placeholder="מס קטגוריה" />
+	<input type="text" id="level_id" name="level_id" placeholder="מס רמה" />
+	
+	</form>
+	
+</div>
+<div style='display:none;'>
+	<select id="category_list"><option value="all">כל הקטגוריות</option><option value="1">קטגוריה כלשהי</option></select>
+	<table id="tbl_all_categories"> </table>
+	<table style='display:none;' id="tbl1"> </table>
+</div>
+</body>
+</html>
