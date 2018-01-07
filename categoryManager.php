@@ -33,7 +33,7 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 		    		}
                 }
             };
-		
+			
             xmlhttp.open("GET", "addRow.php?table=categories&name=" + name , true);
             xmlhttp.send();
 		}
@@ -211,7 +211,7 @@ if(!isset($_SESSION['username']) || empty($_SESSION['username']) || ($_SESSION['
 	</table>
 	</div>
 	<div id="right" style="width: 40%;float:right;margin:40px">
-	<div style='float:center;'>
+	<div style='float:center;display:none;'>
 		<div class="add" style="color:white;">
 		הוסף ניקוד לרמה:<input class="add_row" id='score'>	
 		<button style="margin-right:10px;" onclick="javascript:validateInput(2);">הוסף רמה</button>
