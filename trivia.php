@@ -40,7 +40,7 @@ if ($conn->connect_error) {
 	}
 
 	if ($played_today && $_SESSION['question_num'] > $db['questions_num_per_game']) {
-		header("location: welcome.php");
+		header("location: end.php");
   		exit;
 	}
 	else if (!$played_today || $_SESSION['question_num'] == "0") {
